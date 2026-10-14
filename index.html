@@ -3,160 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengacak Makan Tembalang</title>
-<style>
+    <title>Makan Apa Hari Ini? - Tembalang</title>
+    <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Latar belakang gradasi oranye ke kuning */
-            background: linear-gradient(135deg, #fdba74 0%, #fcd34d 100%);
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            overflow: hidden; 
         }
-        .container {
-            background-color: white;
+        
+        /* --- ANIMASI --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); visibility: hidden; }
+        }
+
+        /* --- STYLE KOTAK (CARD) KACA BURAM --- */
+        .card-box {
+            /* Warna diturunkan jadi krem transparan (85% opacity) agar tidak silau */
+            background-color: rgba(255, 248, 240, 0.85); 
+            /* Efek blur ditebalkan agar seperti kaca */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            
             padding: 35px;
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(221, 107, 32, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5); 
             text-align: center;
             max-width: 480px;
             width: 90%;
-            border-top: 5px solid #f97316; /* Garis aksen oranye di atas */
+            
+            /* Border tipis ala kaca dengan garis atas oranye */
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-top: 5px solid #f97316;
         }
-        h1 {
+
+        /* --- LAYAR INTRO --- */
+        #intro-screen {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        .intro-emoji {
+            font-size: 70px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite; 
+        }
+        .intro-title {
             color: #9a3412;
-            margin-bottom: 5px;
-            font-size: 24px;
-        }
-        p.subtitle {
-            color: #78716c;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        .section-title {
-            font-size: 13px;
+            font-size: 26px;
             font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .intro-desc {
             color: #57534e;
-            text-align: left;
-            margin-bottom: 8px;
-            margin-top: 15px;
+            font-size: 15px;
+            margin-bottom: 30px;
+            line-height: 1.5;
         }
-        .btn-group {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 15px;
-        }
-        .mode-btn, .filter-btn {
-            flex: 1;
-            padding: 10px;
-            font-size: 13px;
-            font-weight: bold;
-            border: 2px solid;
-            background-color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .mode-btn {
-            border-color: #f97316;
-            color: #ea580c;
-        }
-        .mode-btn.active, .mode-btn:hover {
+        .btn-mulai {
             background-color: #f97316;
             color: white;
-        }
-        .filter-btn {
-            border-color: #eab308;
-            color: #ca8a04;
-            font-size: 12px;
-        }
-        .filter-btn.active, .filter-btn:hover {
-            background-color: #eab308;
-            color: white;
-        }
-        #filter-container {
-            transition: opacity 0.3s;
-        }
-        #hasil {
+            border: none;
+            padding: 15px 30px;
             font-size: 18px;
             font-weight: bold;
-            color: #b91c1c;
-            min-height: 85px;
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #fff7ed;
-            border: 2px dashed #fdba74;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 6px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 6px 15px rgba(249, 115, 22, 0.4);
+            transition: all 0.3s;
         }
-        .info-badge {
-            font-size: 12px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        .btn-mulai:hover { background-color: #ea580c; transform: translateY(-2px); }
+
+        /* --- LAYAR UTAMA (APLIKASI) --- */
+        #main-app {
+            display: none; 
         }
+        
+        h1 { color: #9a3412; margin-bottom: 5px; font-size: 24px; }
+        p.subtitle { color: #78716c; margin-bottom: 20px; font-size: 14px; }
+        .section-title { font-size: 13px; font-weight: bold; color: #57534e; text-align: left; margin-bottom: 8px; margin-top: 15px; }
+        
+        .btn-group { display: flex; gap: 6px; margin-bottom: 15px; }
+        .mode-btn, .filter-btn {
+            flex: 1; padding: 10px; font-size: 13px; font-weight: bold;
+            border: 2px solid; background-color: rgba(255, 255, 255, 0.7); border-radius: 8px;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .mode-btn { border-color: #f97316; color: #ea580c; }
+        .mode-btn.active, .mode-btn:hover { background-color: #f97316; color: white; }
+        .filter-btn { border-color: #eab308; color: #ca8a04; font-size: 12px; }
+        .filter-btn.active, .filter-btn:hover { background-color: #eab308; color: white; }
+        
+        #hasil {
+            font-size: 18px; font-weight: bold; color: #b91c1c; min-height: 85px;
+            margin-bottom: 20px; padding: 15px; background-color: rgba(255, 247, 237, 0.8);
+            border: 2px dashed #fdba74; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 6px;
+        }
+        .info-badge { font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .badge-murah { background-color: #dcfce7; color: #15803d; }
         .badge-mahal { background-color: #fee2e2; color: #b91c1c; }
         .badge-umum { background-color: #fef3c7; color: #b45309; }
 
         #hasil a {
-            color: #ea580c;
-            font-size: 13px;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 4px;
-            background-color: white;
-            padding: 5px 12px;
-            border-radius: 15px;
-            border: 1px solid #ea580c;
+            color: #ea580c; font-size: 13px; text-decoration: none;
+            display: inline-block; margin-top: 4px; background-color: white;
+            padding: 5px 12px; border-radius: 15px; border: 1px solid #ea580c;
             transition: all 0.2s;
         }
-        #hasil a:hover {
-            background-color: #ea580c;
-            color: white;
-        }
+        #hasil a:hover { background-color: #ea580c; color: white; }
+        
         .main-btn {
-            background-color: #ef4444; /* Merah cerah */
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            font-size: 17px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-            width: 100%;
-            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
+            background-color: #ef4444; color: white; border: none; padding: 15px 20px;
+            font-size: 17px; font-weight: bold; border-radius: 10px; cursor: pointer;
+            transition: 0.3s; width: 100%; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
         }
-        .main-btn:hover {
-            background-color: #dc2626;
-        }
-        .main-btn:active {
-            transform: scale(0.98); /* Efek tombol tertekan */
-        }
+        .main-btn:hover { background-color: #dc2626; }
+        .main-btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <!-- ================= LAYAR INTRO ================= -->
+    <div id="intro-screen" class="card-box">
+        <div class="intro-emoji">🤤🍗🍜</div>
+        <div class="intro-title">Bingung Mau Makan Apa?</div>
+        <div class="intro-desc">Pusing tiap hari mikirin menu makan di Tembalang? Tenang, biar website ini yang bantu milih secara acak buat kamu!</div>
+        <button class="btn-mulai" onclick="masukAplikasi()">Gas Cari Makan! 🚀</button>
+    </div>
+
+    <!-- ================= LAYAR APLIKASI UTAMA ================= -->
+    <div id="main-app" class="card-box">
         <h1>Makan Apa Hari Ini? 🍽️</h1>
         <p class="subtitle">Pengacak Kuliner Tembalang</p>
         
-        <!-- 1. Pilihan Mode -->
+        <!-- Pilihan Mode -->
         <div class="section-title">Pilih Mode:</div>
         <div class="btn-group">
             <button class="mode-btn active" onclick="ubahMode('rekomendasi', this)">⭐ Rekomendasiku</button>
-            <button class="mode-btn" onclick="ubahMode('umum', this)">🔍 Kategori Umum (Bingung)</button>
+            <button class="mode-btn" onclick="ubahMode('umum', this)">🔍 Kategori Umum</button>
         </div>
 
-        <!-- 2. Pilihan Filter Harga (Hanya Muncul di Mode Rekomendasi) -->
+        <!-- Pilihan Filter Harga -->
         <div id="filter-container">
             <div class="section-title">Filter Harga:</div>
             <div class="btn-group">
@@ -171,61 +178,47 @@
         <button class="main-btn" onclick="acakMenu()">Acak Sekarang!</button>
     </div>
 
+    <!-- ================= SCRIPT JAVASCRIPT ================= -->
     <script>
-        // Database 1: Rekomendasi spesifik dengan nama tempat dan harganya
+        function masukAplikasi() {
+            const intro = document.getElementById('intro-screen');
+            const app = document.getElementById('main-app');
+            
+            intro.style.animation = 'fadeOut 0.4s ease-out forwards';
+            
+            setTimeout(() => {
+                intro.style.display = 'none'; 
+                app.style.display = 'block'; 
+                app.style.animation = 'fadeIn 0.6s ease-out forwards'; 
+            }, 400); 
+        }
+
         const listRekomendasi = [
-            { nama: "Depot Harmoni", harga: ">25" },
-            { nama: "Temcit Chiken", harga: "<25" },
-            { nama: "Ayam Krispi Bapae", harga: "<25" },
-            { nama: "Nasi Rawon Tengah Malam", harga: ">25" },
-            { nama: "Batterhub", harga: ">25" },
-            { nama: "Putra Bungsu Padang", harga: "<25" },
-            { nama: "Rasa Ayam", harga: ">25" },
-            { nama: "Bu Nur", harga: "<25" },
-            { nama: "Baskoro Sami Seneng", harga: ">25" },
-            { nama: "Penyetan Angkringan Pendopo", harga: "<25" },
-            { nama: "Omar", harga: ">25" },
-            { nama: "Bebek Sebelah Patung Kuda", harga: ">25" },
-            { nama: "Ayam Bu Tumbar", harga: "<25" },
-            { nama: "Sate Sundu Ngaliyan", harga: ">25" },
-            { nama: "Sate Taichan Morokangen", harga: ">25" },
-            { nama: "Padangju", harga: ">25" },
-            { nama: "Nasi Kuning Pasundan", harga: "<25" },
-            { nama: "Ketoprak Indomie Mas Kembar", harga: "<25" },
-            { nama: "Maestro", harga: "<25" },
-            { nama: "Leleh", harga: "<25" },
-            { nama: "Preksu", harga: "<25" },
-            { nama: "Warung Makan Gondang Raya", harga: "<25" },
-            { nama: "Nasi Uduk JKT", harga: ">25" },
-            { nama: "Ma Prie 2", harga: "<25" },
-            { nama: "Omaira", harga: "<25" },
-            { nama: "Kedai Tinari", harga: ">25" },
-            { nama: "Ayam Jaya", harga: ">25" },
-            { nama: "Konicipi", harga: ">25" },
-            { nama: "Ayam Pagembus", harga: ">25" },
-            { nama: "Penyet Kuah Timoho", harga: "<25" },
-            { nama: "Bubur Mas Bon", harga: "<25" },
-            { nama: "Bubur Pak Sholeh", harga: "<25" },
-            { nama: "Kedai Seafood JKT", harga: ">25" },
-            { nama: "Warung Muda Spesial Ayam Bakar", harga: ">25" },
+            { nama: "Depot Harmoni", harga: ">25" }, { nama: "Temcit Chiken", harga: "<25" },
+            { nama: "Ayam Krispi Bapae", harga: "<25" }, { nama: "Nasi Rawon Tengah Malam", harga: ">25" },
+            { nama: "Batterhub", harga: ">25" }, { nama: "Putra Bungsu Padang", harga: "<25" },
+            { nama: "Rasa Ayam", harga: ">25" }, { nama: "Bu Nur", harga: "<25" },
+            { nama: "Baskoro Sami Seneng", harga: ">25" }, { nama: "Penyetan Angkringan Pendopo", harga: "<25" },
+            { nama: "Omar", harga: ">25" }, { nama: "Bebek Sebelah Patung Kuda", harga: ">25" },
+            { nama: "Ayam Bu Tumbar", harga: "<25" }, { nama: "Sate Sundu Ngaliyan", harga: ">25" },
+            { nama: "Sate Taichan Morokangen", harga: ">25" }, { nama: "Padangju", harga: ">25" },
+            { nama: "Nasi Kuning Pasundan", harga: "<25" }, { nama: "Ketoprak Indomie Mas Kembar", harga: "<25" },
+            { nama: "Maestro", harga: "<25" }, { nama: "Leleh", harga: "<25" },
+            { nama: "Preksu", harga: "<25" }, { nama: "Warung Makan Gondang Raya", harga: "<25" },
+            { nama: "Nasi Uduk JKT", harga: ">25" }, { nama: "Ma Prie 2", harga: "<25" },
+            { nama: "Omaira", harga: "<25" }, { nama: "Kedai Tinari", harga: ">25" },
+            { nama: "Ayam Jaya", harga: ">25" }, { nama: "Konicipi", harga: ">25" },
+            { nama: "Ayam Pagembus", harga: ">25" }, { nama: "Penyet Kuah Timoho", harga: "<25" },
+            { nama: "Bubur Mas Bon", harga: "<25" }, { nama: "Bubur Pak Sholeh", harga: "<25" },
+            { nama: "Kedai Seafood JKT", harga: ">25" }, { nama: "Warung Muda Spesial Ayam Bakar", harga: ">25" },
             { nama: "Selaras Resto", harga: "<25" }
         ];
 
-        // Database 2: Kategori umum buat yang lagi bingung mau makan apa
         const listUmum = [
-            "Soto Ayam / Daging",
-            "Nasi Goreng / Mie Goreng",
-            "Bubur Ayam",
-            "Ayam Geprek / Penyetan",
-            "Nasi Padang",
-            "Nasi Kuning / Uduk",
-            "Sate Ayam / Taichan",
-            "Bakso / Mie Ayam",
-            "Warteg / Nasi Rames",
-            "Bebek Goreng / Bakar",
-            "Ketoprak / Gado-gado",
-            "Seafood / Pecel Lele",
-            "Warmindo / Burjo"
+            "Soto Ayam / Daging", "Nasi Goreng / Mie Goreng", "Bubur Ayam",
+            "Ayam Geprek / Penyetan", "Nasi Padang", "Nasi Kuning / Uduk",
+            "Sate Ayam / Taichan", "Bakso / Mie Ayam", "Warteg / Nasi Rames",
+            "Bebek Goreng / Bakar", "Ketoprak / Gado-gado", "Seafood / Pecel Lele", "Warmindo / Burjo"
         ];
 
         let modeAktif = 'rekomendasi';
@@ -233,13 +226,10 @@
 
         function ubahMode(mode, elemenTombol) {
             modeAktif = mode;
-            
-            // Ubah warna tombol mode
             const semuaTombolMode = document.querySelectorAll('.mode-btn');
             semuaTombolMode.forEach(btn => btn.classList.remove('active'));
             elemenTombol.classList.add('active');
 
-            // Sembunyikan filter harga kalau milih mode Kategori Umum
             const filterContainer = document.getElementById("filter-container");
             if (mode === 'umum') {
                 filterContainer.style.display = 'none';
@@ -257,11 +247,10 @@
 
         function acakMenu() {
             const elemenHasil = document.getElementById("hasil");
-            elemenHasil.innerHTML = "Mengacak...";
+            elemenHasil.innerHTML = "Mencarikan menu yang pas... 😋";
 
             setTimeout(() => {
                 if (modeAktif === 'rekomendasi') {
-                    // Filter berdasarkan harga yang dipilih
                     let daftarPilihan = listRekomendasi;
                     if (filterAktif !== 'semua') {
                         daftarPilihan = listRekomendasi.filter(item => item.harga === filterAktif);
@@ -274,10 +263,8 @@
 
                     const indeksAcak = Math.floor(Math.random() * daftarPilihan.length);
                     const terpilih = daftarPilihan[indeksAcak];
-
                     const urlMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(terpilih.nama + " Tembalang")}`;
                     
-                    // Set warna badge berdasarkan harga
                     const kelasBadge = terpilih.harga === '<25' ? 'badge-murah' : 'badge-mahal';
                     const teksBadge = terpilih.harga === '<25' ? '💰 Di Bawah 25rb' : '💸 Di Atas 25rb';
 
@@ -286,12 +273,9 @@
                         <span class="info-badge ${kelasBadge}">${teksBadge}</span>
                         <a href="${urlMaps}" target="_blank">📍 Menuju Titik Maps</a>
                     `;
-
                 } else {
-                    // Mode Kategori Umum
                     const indeksAcak = Math.floor(Math.random() * listUmum.length);
                     const kategoriTerpilih = listUmum[indeksAcak];
-
                     const urlMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(kategoriTerpilih + " terdekat Tembalang")}`;
                     
                     elemenHasil.innerHTML = `
